@@ -7,13 +7,11 @@ setup(
     packages = find_packages('.'),
     entry_points = {
         'console_scripts': [
-            'timed-login = timed_client.cli:login',
-            'timed-status = timed_client.cli:status',
-            'timed-track = timed_client.cli:track',
-            'timed-stats = timed_client.cli:stats',
+            'timed = timed_client.cli:main',
         ]
     },
     install_requires = [
+        'click',
         'pyyaml',
         'requests',
     ],
