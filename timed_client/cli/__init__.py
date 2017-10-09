@@ -8,6 +8,7 @@ import click
 from timed_client import config
 
 from .interact import login_interactive, autologin
+from .render   import show_user_status
 
 
 @click.group()
@@ -31,10 +32,4 @@ def status():
         print("   timed-login")
         sys.exit(1)
 
-    user = tc.user()
-    emp = user.current_employment()
-
-    print("User: %s %s (id=%s)" % (user.first_name, user.last_name, user.id))
-    print("      Employment: %s%% (%s per day)" % (emp.percentage, emp.worktime_per_day))
-    print("      Balance:    %s" % user.worktime_balance)
-
+    show_user_status(tc.user())
