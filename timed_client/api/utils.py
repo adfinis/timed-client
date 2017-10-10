@@ -30,6 +30,4 @@ def difftime(t1, t2):
     dt1 = datetime.datetime(2000, 1, 15, t1.hour, t1.minute, t1.second, tzinfo=t1.tzinfo)
     dt2 = datetime.datetime(2000, 1, 15, t2.hour, t2.minute, t2.second, tzinfo=t2.tzinfo)
 
-    print("DIFFTIME: %s - %s" % (dt1.time(), dt2.time()))
-
     return dt1 - dt2

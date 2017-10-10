@@ -33,19 +33,22 @@ class APIModel():
             if isinstance(data, dict):
                 # single object
                 setattr(self, rname, res.stored(**data))
-            else:
+            elif isinstance(data, list):
                 setattr(self, rname,
                         [
                            res.stored(**rdata)
                            for rdata
                            in data
                         ])
+            elif data is None:
+                # Yes that's possible as well
+                setattr(self, rname, None)
 
     def api_client(self):
         return self._res.client
 
 class APIResult(list):
-    def __init__(self, client, data, included=[]):
+    def __init__(self, client, data, included=[], meta=None):
         # We process lists and single-object results the same way.
         self._deferred = []
         self.client = client
@@ -66,7 +69,7 @@ class APIResult(list):
         return obj
 
     @classmethod
-    def from_resp(cls, client, data, included=[]):
+    def from_resp(cls, client, data, included=[], meta=None):
         if isinstance(data, dict):
             # Single instance. handle like a list, but
             # then only return the (singular) result

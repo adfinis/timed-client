@@ -4,6 +4,7 @@
 import functools
 import json
 import base64
+import datetime
 import requests
 from . import parser
 from . import model
@@ -67,14 +68,52 @@ class Timed:
             'users/%d' % self._auth_info['user_id'],
             {'include': 'employments,employments.location'})
 
+
+    def activities(self, date=None):
+        """Return the (tracking) activities of the given date
+
+        If no date is given, defaults to today. Date should
+        be a python `datetime.date` object.
+        """
+
+        if date is None:
+            date = datetime.date.today()
+
+        return self._get(
+            'activities',
+            {
+                'include': 'blocks,task,task.project,task.project.customer',
+                'day': date.isoformat()
+             })
+
+    def reports(self, date=None):
+        """Return the timesheet report entries of the given date
+
+        If no date is given, defaults to today. Date should
+        be a python `datetime.date` object.
+        """
+
+        if date is None:
+            date = datetime.date.today()
+
+        return self._get(
+            'reports',
+            {
+                'include': 'task,task.project,task.project.customer',
+                'date': date.isoformat(),
+                'user': self.user().id
+             })
+
     def customers(self, search=None):
         return self._get('customers')
 
     def _get(self, url, params={}):
-        data = self._session.get(self._path(url), params=params).json()
+        resp = self._session.get(self._path(url), params=params)
+        data = resp.json()
         try:
             return parser.APIResult.from_resp(self, **data)
         except:
+            raise
             raise self._error_from(data)
 
     def _post(self, url, data):
