@@ -14,6 +14,9 @@ setup(
         'click',
         'pyyaml',
         'requests',
+        'pytz',
+        'texttable',
+        'pytimeparse',
     ],
 
     author = "Adfinis-Sygroup AG",
