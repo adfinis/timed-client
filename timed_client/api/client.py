@@ -65,9 +65,25 @@ class Timed:
     @functools.lru_cache()
     def user(self):
         return self._get(
-            'users/%d' % self._auth_info['user_id'],
-            {'include': 'employments,employments.location'})
+            'users/%d' % self._auth_info['user_id'])
 
+    @functools.lru_cache()
+    def employments(self):
+        return self._get(
+            'employments',
+            {
+                'include': 'location',
+                'user': self._auth_info['user_id']
+            })
+
+    @functools.lru_cache()
+    def worktime_balance(self):
+        return self._get(
+            'worktime-balances',
+            {
+                'user': self._auth_info['user_id'],
+                'date': datetime.date.today()
+            })[0]
 
     def activities(self, date=None):
         """Return the (tracking) activities of the given date
@@ -82,7 +98,7 @@ class Timed:
         return self._get(
             'activities',
             {
-                'include': 'blocks,task,task.project,task.project.customer',
+                'include': 'task,task.project,task.project.customer',
                 'day': date.isoformat()
              })
 

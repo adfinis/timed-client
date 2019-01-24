@@ -29,9 +29,9 @@ def show_activities(timed, day=None):
 
     rows = [
             [
-                act.task.project.customer.name,
-                act.task.project.name,
-                act.task.name,
+                act.task.project.customer.name if act.task else "",
+                act.task.project.name if act.task else "",
+                act.task.name if act.task else "",
                 act.comment,
                 act.current_duration()
             ]
@@ -81,9 +81,23 @@ def show_user_status(timed):
     "Show the user's status (Employment, overtime balance, etc)"
 
     user = timed.user()
-    emp = user.current_employment()
+    employments = timed.employments()
+    emp = current_employment(employments)
+    worktime_balance = timed.worktime_balance()
 
     print("User: %s %s (id=%s)" % (user.first_name, user.last_name, user.id))
     print("      Employment: %s%% (%s per day)" % (emp.percentage, emp.worktime_per_day))
-    print("      Balance:    %s" % user.worktime_balance)
+    print("      Balance:    %s" % worktime_balance.balance)
 
+
+def current_employment(employments):
+    now = datetime.datetime.now()
+    for emp in employments:
+        start_date = datetime.datetime.strptime(emp.start_date, '%Y-%m-%d')
+        try:
+            end_date   = datetime.datetime.strptime(emp.end_date  , '%Y-%m-%d')
+        except:
+            end_date = datetime.datetime.now()
+
+        if start_date < now and end_date >= now:
+            return emp

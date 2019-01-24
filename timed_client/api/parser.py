@@ -26,7 +26,12 @@ class APIModel():
             setattr(self, kname, v)
 
         for rtype, rcontent in relationships.items():
-            data  = rcontent['data']
+            try:
+                data  = rcontent['data']
+            except KeyError:
+                # working around JSON API bug, missing 'data' for 'activity' on endpoint 'reports/'
+                continue
+
             rname = rtype.replace('-', '_')
             #print("%s%s - reading relationships: %s" % (type,id, rname))
 
